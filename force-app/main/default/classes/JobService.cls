@@ -2,7 +2,7 @@
  * @description : Service class for handling Job-related operations
  * @author      : Anna Polańczyk
  * @group       : Recruitment
- * @last modified on  : 02-24-2025
+ * @last modified on  : 02-25-2025
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class JobService {
@@ -13,14 +13,14 @@ public with sharing class JobService {
            !Schema.sObjectType.Job__c.fields.Description__c.isAccessible() ||
            !Schema.sObjectType.Job__c.fields.Required_Skills__c.isAccessible() ||
            !Schema.sObjectType.Job__c.fields.Status__c.isAccessible() ||
-           !Schema.sObjectType.Job__c.fields.Job_Name__c.isAccessible() ||
+           !Schema.sObjectType.Job__c.fields.Name.isAccessible() ||
            !Schema.sObjectType.Candidate__c.isAccessible() ||
            !Schema.sObjectType.Candidate__c.fields.Id.isAccessible() ||
            !Schema.sObjectType.Candidate__c.fields.Job__c.isAccessible()) {
             throw new SecurityException('Insufficient permissions to access Job fields');
         }
 
-        return [SELECT Id, Title__c, Description__c, Required_Skills__c, Status__c, Job_Name__c
+        return [SELECT Id, Title__c, Description__c, Required_Skills__c, Status__c
                 FROM Job__c 
                 WHERE Status__c = 'Open'
                 ORDER BY CreatedDate DESC
@@ -108,7 +108,6 @@ public with sharing class JobService {
         return [SELECT Id, Title__c, Description__c, Required_Skills__c, Status__c
                 FROM Job__c
                 WHERE Title__c LIKE :searchQuery
-                OR Description__c LIKE :searchQuery
                 OR Required_Skills__c LIKE :searchQuery
                 ORDER BY CreatedDate DESC
                 LIMIT 50];

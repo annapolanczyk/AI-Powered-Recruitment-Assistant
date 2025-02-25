@@ -1,0 +1,22 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 02-25-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Candidate Details" icon-name="standard:person_account">
+        <div class="slds-m-around_medium">
+            <template if:true={candidate.data}>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <p><strong>Name: </strong>{candidateName}</p>
+                        <p><strong>Email: </strong>{candidate.data.Email__c}</p>
+                        <p><strong>Status: </strong>{candidate.data.Status__c}</p>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
