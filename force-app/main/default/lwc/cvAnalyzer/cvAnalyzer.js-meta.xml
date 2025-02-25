@@ -8,7 +8,7 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
-            <property name="candidateId" type="String" label="Candidate ID" description="ID of the candidate record"/>
+            <property name="candidateId" type="String" />
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

@@ -1,5 +1,6 @@
 import { LightningElement, api, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import updateCandidateAnalysisResults from "@salesforce/apex/CandidateService.updateCandidateAnalysisResults";
 
 export default class CvAnalyzer extends LightningElement {
     @api recordId;
