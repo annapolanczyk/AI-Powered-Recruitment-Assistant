@@ -1,0 +1,49 @@
+.custom-progress-bar {
+    height: 16px;
+    background-color: #e0e5ee;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #0070d2;
+    border-radius: 8px;
+    transition: width 0.5s ease-in-out;
+}
+
+.custom-upload-button {
+    line-height: 1.875rem;
+    background-color: white;
+    border: 1px solid #d8dde6;
+}
+
+.save-button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background-color: #4bca81;
+    color: white;
+    font-weight: 500;
+}
+
+.upload-area {
+    border-style: dashed;
+    border-radius: 4px;
+}
+
+.upload-btn {
+    display: flex;
+    align-items: center;
+}
+
+.upload-container {
+    display: flex;
+    align-items: center;
+    border: 1px dashed #d8dde6;
+    border-radius: 4px;
+}
+
+.or-text {
+    color: #706e6b;
+} 

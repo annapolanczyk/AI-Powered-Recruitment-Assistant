@@ -1,0 +1,62 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 02-25-2025
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <lightning-card title="Recruitment Dashboard" icon-name="standard:dashboard">
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-3">
+                <lightning-card title="Active Jobs" icon-name="standard:job_profile">
+                    <div class="slds-p-around_medium">
+                        <template if:true={activeJobs.data}>
+                            <template for:each={activeJobs.data} for:item="job">
+                                <div key={job.Id} class="slds-m-bottom_small">
+                                    <a onclick={viewJobDetails} data-job-id={job.Id}>
+                                        {job.Title__c}
+                                    </a>
+                                    <p class="slds-text-body_small">
+                                        Candidates: {job.Candidates__r.length}
+                                    </p>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:true={activeJobs.error}>
+                            <div class="slds-text-color_error">
+                                Error loading jobs: {activeJobs.error}
+                            </div>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>
+            <div class="slds-col slds-size_2-of-3">
+                <lightning-card title="Recruitment Metrics" icon-name="standard:metrics">
+                    <div class="slds-grid slds-gutters slds-p-around_medium">
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-text-heading_large">{metrics.activeJobs}</div>
+                            <div class="slds-text-title">Active Jobs</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-text-heading_large">{metrics.totalCandidates}</div>
+                            <div class="slds-text-title">Total Candidates</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-3">
+                            <div class="slds-text-heading_large">{metrics.conversionRate}%</div>
+                            <div class="slds-text-title">Acceptance Rate</div>
+                        </div>
+                    </div>
+                </lightning-card>
+            </div>
+        </div>
+        
+        <div class="slds-m-top_medium">
+            <lightning-card title="Recent Candidates" icon-name="standard:people">
+                <div class="slds-p-around_medium">
+                    <!-- Recent candidates will be displayed here -->
+                </div>
+            </lightning-card>
+        </div>
+    </lightning-card>
+</template>

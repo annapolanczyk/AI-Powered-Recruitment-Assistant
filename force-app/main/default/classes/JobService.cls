@@ -2,10 +2,11 @@
  * @description : Service class for handling Job-related operations
  * @author      : Anna Polańczyk
  * @group       : Recruitment
- * @last modified on  : 02-25-2025
+ * @last modified on  : 02-26-2025
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class JobService {
+    @AuraEnabled(cacheable=true)
     public static List<Job__c> getActiveJobs() {
         if(!Schema.sObjectType.Job__c.isAccessible() ||
            !Schema.sObjectType.Job__c.fields.Id.isAccessible() ||
@@ -13,17 +14,14 @@ public with sharing class JobService {
            !Schema.sObjectType.Job__c.fields.Description__c.isAccessible() ||
            !Schema.sObjectType.Job__c.fields.Required_Skills__c.isAccessible() ||
            !Schema.sObjectType.Job__c.fields.Status__c.isAccessible() ||
-           !Schema.sObjectType.Job__c.fields.Name.isAccessible() ||
-           !Schema.sObjectType.Candidate__c.isAccessible() ||
-           !Schema.sObjectType.Candidate__c.fields.Id.isAccessible() ||
-           !Schema.sObjectType.Candidate__c.fields.Job__c.isAccessible()) {
-            throw new SecurityException('Insufficient permissions to access Job fields');
+           !Schema.sObjectType.Job__c.fields.Name.isAccessible()) {
+            throw new AuraHandledException('Insufficient permissions to access Job fields');
         }
 
-        return [SELECT Id, Title__c, Description__c, Required_Skills__c, Status__c
+        return [SELECT Id, Title__c, Description__c, Required_Skills__c, Status__c, Name 
                 FROM Job__c 
-                WHERE Status__c = 'Open'
-                ORDER BY CreatedDate DESC
+                WHERE Status__c = 'Open' 
+                ORDER BY CreatedDate DESC 
                 LIMIT 1000];
     }
     
@@ -111,5 +109,19 @@ public with sharing class JobService {
                 OR Required_Skills__c LIKE :searchQuery
                 ORDER BY CreatedDate DESC
                 LIMIT 50];
+    }
+
+    /**
+     * Pobiera wymagane umiejętności dla danego stanowiska
+     */
+    public static String getRequiredSkillsForJob(Id jobId) {
+        if (!Schema.sObjectType.Job__c.isAccessible() || jobId == null) {
+            return '';
+        }
+        
+        Job__c job = [SELECT Required_Skills__c FROM Job__c WHERE Id = :jobId LIMIT 1];
+        String skills = job.Required_Skills__c != null ? job.Required_Skills__c : '';
+        System.debug(LoggingLevel.INFO, '>>> Required skills: ' + skills);
+        return skills;
     }
 }

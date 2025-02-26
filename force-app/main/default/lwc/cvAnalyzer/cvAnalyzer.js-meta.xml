@@ -5,10 +5,14 @@
     <targets>
         <target>lightning__RecordPage</target>
         <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
             <property name="candidateId" type="String" label="Candidate ID" description="ID of the candidate record" default="{!recordId}" />
+            <objects>
+                <object>Candidate__c</object>
+            </objects>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

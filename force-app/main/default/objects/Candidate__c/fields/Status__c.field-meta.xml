@@ -11,24 +11,24 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>New,</fullName>
+                <fullName>New</fullName>
                 <default>false</default>
-                <label>New,</label>
+                <label>New</label>
             </value>
             <value>
-                <fullName>In Review,</fullName>
+                <fullName>In Review</fullName>
                 <default>false</default>
-                <label>In Review,</label>
+                <label>In Review</label>
             </value>
             <value>
-                <fullName>Interviewed,</fullName>
+                <fullName>Interviewed</fullName>
                 <default>false</default>
-                <label>Interviewed,</label>
+                <label>Interviewed</label>
             </value>
             <value>
-                <fullName>Rejected,</fullName>
+                <fullName>Rejected</fullName>
                 <default>false</default>
-                <label>Rejected,</label>
+                <label>Rejected</label>
             </value>
             <value>
                 <fullName>Accepted</fullName>

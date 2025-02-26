@@ -2,10 +2,11 @@
  * @description       : 
  * @author            : ChangeMeIn@UserSettingsUnder.SFDoc
  * @group             : 
- * @last modified on  : 02-24-2025
+ * @last modified on  : 02-25-2025
  * @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 **/
 public with sharing class RecruitmentHelper {
+    @AuraEnabled(cacheable=true)
     public static Map<String, Decimal> calculateRecruitmentMetrics() {
         Map<String, Decimal> metrics = new Map<String, Decimal>();
         

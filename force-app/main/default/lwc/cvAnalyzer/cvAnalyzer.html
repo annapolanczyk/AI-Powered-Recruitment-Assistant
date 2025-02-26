@@ -7,72 +7,88 @@
 -->
 <template>
     <lightning-card title="CV Analysis" icon-name="standard:document">
-        <div class="slds-p-around_medium">
-            <div class="slds-grid slds-gutters">
-                <div class="slds-col slds-size_1-of-2">
-                    <lightning-input type="file" 
-                        label="Upload CV" 
-                        accept=".pdf,.doc,.docx,.txt"
-                        onchange={handleFileUpload}>
-                    </lightning-input>
-                    <div class="slds-m-top_medium slds-m-bottom_medium">
-                        <lightning-button 
-                            label="Analyze CV" 
-                            onclick={analyzeCV} 
-                            variant="brand"
-                            disabled={isAnalyzeDisabled}>
-                        </lightning-button>
-                    </div>
-                </div>
-                <div class="slds-col slds-size_1-of-2">
-                    <template if:true={isLoading}>
-                        <div class="slds-is-relative slds-p-around_medium">
-                            <lightning-spinner alternative-text="Analyzing CV..." size="medium"></lightning-spinner>
-                            <p class="slds-text-align_center">Analyzing CV using AI...</p>
+        <div class="slds-m-around_medium">
+            <!-- Upload CV section -->
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Upload CV</label>
+                <div class="slds-form-element__control">
+                    <div class="slds-file-selector slds-file-selector_files">
+                        <div class="slds-file-selector__dropzone">
+                            <lightning-file-upload
+                                label="Upload Files"
+                                name="fileUploader"
+                                accept={acceptedFormats}
+                                record-id={effectiveRecordId}
+                                onuploadfinished={handleUploadFinished}
+                                multiple="false">
+                            </lightning-file-upload>
                         </div>
-                    </template>
+                    </div>
                 </div>
             </div>
             
-            <template if:true={analysisResults}>
-                <div class="slds-box slds-theme_shade slds-m-top_medium">
-                    <h2 class="slds-text-heading_medium slds-m-bottom_small">Analysis Results</h2>
+            <!-- Analyze button -->
+            <div class="slds-m-top_medium slds-m-bottom_medium">
+                <lightning-button 
+                    variant="brand" 
+                    label="Analyze CV" 
+                    onclick={handleAnalyzeCV} 
+                    disabled={isAnalyzeDisabled}>
+                </lightning-button>
+            </div>
+            
+            <!-- Analysis results -->
+            <template if:true={hasResults}>
+                <div class="slds-box slds-theme_default">
+                    <h2 class="slds-text-heading_medium slds-m-bottom_medium">Analysis Results</h2>
                     
-                    <div class="slds-grid slds-gutters">
-                        <div class="slds-col slds-size_1-of-2">
-                            <h3 class="slds-text-title_caps">Skills Identified</h3>
-                            <ul class="slds-list_dotted">
-                                <template for:each={analysisResults.skills} for:item="skill">
-                                    <li key={skill}>{skill}</li>
-                                </template>
-                            </ul>
-                        </div>
-                        <div class="slds-col slds-size_1-of-2">
-                            <h3 class="slds-text-title_caps">Job Match Score</h3>
-                            <div class="slds-m-top_x-small">
+                    <!-- Skills identified -->
+                    <div class="slds-m-bottom_medium">
+                        <h3 class="slds-text-title_caps">SKILLS IDENTIFIED</h3>
+                        <ul class="slds-list_dotted slds-m-top_x-small">
+                            <template for:each={skillsList} for:item="skill">
+                                <li key={skill} class="slds-m-vertical_xx-small">{skill}</li>
+                            </template>
+                        </ul>
+                    </div>
+                    
+                    <!-- Job match score -->
+                    <div class="slds-m-bottom_medium">
+                        <h3 class="slds-text-title_caps">JOB MATCH SCORE</h3>
+                        <div class="slds-grid slds-m-top_small">
+                            <div class="slds-col slds-size_1-of-1">
                                 <lightning-progress-bar 
-                                    value={analysisResults.matchScore} 
+                                    value={matchScore} 
                                     size="large">
                                 </lightning-progress-bar>
-                                <p class="slds-text-align_center slds-m-top_x-small">
-                                    {analysisResults.matchScore}% Match
-                                </p>
+                                <div class="slds-text-align_center slds-m-top_x-small">
+                                    <span class="slds-text-heading_small">{matchScore}% Match</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="slds-m-top_medium">
-                        <h3 class="slds-text-title_caps">Recommendations</h3>
-                        <p>{analysisResults.recommendation}</p>
+                    <!-- Recommendations -->
+                    <div class="slds-m-bottom_medium">
+                        <h3 class="slds-text-title_caps">RECOMMENDATIONS</h3>
+                        <p class="slds-m-top_x-small">{recommendation}</p>
                     </div>
                     
-                    <div class="slds-m-top_medium">
+                    <!-- Save results button -->
+                    <div class="slds-text-align_center slds-m-top_medium">
                         <lightning-button 
+                            variant="success" 
                             label="Save Analysis Results" 
-                            onclick={saveResults} 
-                            variant="success">
+                            onclick={handleSaveResults}>
                         </lightning-button>
                     </div>
+                </div>
+            </template>
+            
+            <!-- Spinner while processing -->
+            <template if:true={isLoading}>
+                <div class="slds-is-relative">
+                    <lightning-spinner alternative-text="Analyzing CV..." size="medium"></lightning-spinner>
                 </div>
             </template>
         </div>
