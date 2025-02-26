@@ -1,5 +1,6 @@
 import { LightningElement, api, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import analyzeCV from "@salesforce/apex/CandidateService.analyzeCV";
 import updateCandidateAnalysisResults from "@salesforce/apex/CandidateService.updateCandidateAnalysisResults";
 
 export default class CvAnalyzer extends LightningElement {
@@ -9,39 +10,81 @@ export default class CvAnalyzer extends LightningElement {
     @track isLoading = false;
     @track analysisResults;
     @track uploadedFile;
+    @track contentDocumentId;
     
     get isAnalyzeDisabled() {
-        return !this.uploadedFile;
+        return !this.contentDocumentId;
+    }
+    
+    get effectiveRecordId() {
+        return this.recordId || this.candidateId;
     }
     
     handleFileUpload(event) {
-        const file = event.target.files[0];
-        if (file) {
-            this.uploadedFile = file;
+        if (event.target.files.length > 0) {
+            this.uploadedFile = event.target.files[0];
             this.dispatchEvent(
                 new ShowToastEvent({
-                    title: "File Ready",
-                    message: "File \"" + file.name + "\" ready for analysis",
-                    variant: "success"
+                    title: "File Selected",
+                    message: `File "${this.uploadedFile.name}" selected`,
+                    variant: "info"
                 })
             );
+            
+            // Przy użyciu standardowych komponentów lightning-input type="file",
+            // plik zostanie automatycznie powiązany z rekordem przez ContentDocumentLink
+            // Teraz należy pobrać ContentDocumentId tego pliku
+            this.getLatestFile();
         }
     }
     
+    getLatestFile() {
+        // Ta metoda jest wywoływana w setTimeout, aby dać czas na przetworzenie pliku
+        // Alternatywnie, możesz użyć EventListener na zdarzenie FILES_ATTACHED_TO_RECORD
+        setTimeout(() => {
+            // W rzeczywistej implementacji należałoby pobrać ContentDocumentId
+            // za pomocą apex. W tej wersji demo zakładamy, że mamy ID.
+            this.contentDocumentId = 'simulatedDocumentId';
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: "File Ready",
+                    message: "File ready for analysis",
+                    variant: "success"
+                })
+            );
+        }, 1000);
+    }
+    
     analyzeCV() {
-        if (!this.uploadedFile) return;
+        if (!this.effectiveRecordId || !this.contentDocumentId) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: "Error",
+                    message: "Candidate ID and file are required",
+                    variant: "error"
+                })
+            );
+            return;
+        }
         
         this.isLoading = true;
         this.analysisResults = null;
         
-        // Simulate AI analysis response
-        setTimeout(() => {
-            this.analysisResults = {
-                skills: ["JavaScript", "Apex", "Salesforce", "Lightning Web Components", "API Integration"],
-                matchScore: 85,
-                recommendation: "This candidate has strong technical skills that match the job requirements. Recommend scheduling a technical interview."
-            };
-            
+        // W środowisku demo, symulujemy wywołanie API
+        if (this.contentDocumentId === 'simulatedDocumentId') {
+            setTimeout(() => {
+                this.simulateAnalysisResults();
+            }, 2000);
+            return;
+        }
+        
+        // W rzeczywistej implementacji wywołujemy API
+        analyzeCV({
+            candidateId: this.effectiveRecordId,
+            fileId: this.contentDocumentId
+        })
+        .then(result => {
+            this.analysisResults = result;
             this.isLoading = false;
             
             this.dispatchEvent(
@@ -51,19 +94,73 @@ export default class CvAnalyzer extends LightningElement {
                     variant: "success"
                 })
             );
-        }, 2000); // Simulate 2 second processing time
+        })
+        .catch(error => {
+            this.isLoading = false;
+            console.error('Error analyzing CV', error);
+            
+            // W demo, symulujemy wyniki nawet w przypadku błędu
+            this.simulateAnalysisResults();
+            
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: "Demo Mode",
+                    message: "Using simulated results (error occurred in API call)",
+                    variant: "warning"
+                })
+            );
+        });
+    }
+    
+    simulateAnalysisResults() {
+        this.analysisResults = {
+            skills: ["JavaScript", "Apex", "Salesforce", "Lightning Web Components", "API Integration"],
+            matchScore: 85,
+            recommendation: "This candidate has strong technical skills that match the job requirements. Recommend scheduling a technical interview."
+        };
+        
+        this.isLoading = false;
     }
     
     saveResults() {
-        if (!this.analysisResults) return;
+        if (!this.analysisResults || !this.effectiveRecordId) {
+            return;
+        }
         
-        // For demo purposes, we will just show a success message
-        this.dispatchEvent(
-            new ShowToastEvent({
-                title: "Results Saved",
-                message: "Analysis results saved to candidate record",
-                variant: "success"
-            })
-        );
+        this.isLoading = true;
+        
+        // Przygotowanie danych do zapisu
+        const resultsMap = {
+            skills: this.analysisResults.skills,
+            matchScore: this.analysisResults.matchScore,
+            recommendation: this.analysisResults.recommendation
+        };
+        
+        // Zapisz wyniki
+        updateCandidateAnalysisResults({
+            candidateId: this.effectiveRecordId,
+            analysisResults: resultsMap
+        })
+        .then(() => {
+            this.isLoading = false;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: "Success",
+                    message: "Analysis results saved to candidate record",
+                    variant: "success"
+                })
+            );
+        })
+        .catch(error => {
+            this.isLoading = false;
+            console.error('Error saving results', error);
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: "Error",
+                    message: "Error saving results: " + (error.body ? error.body.message : error.message),
+                    variant: "error"
+                })
+            );
+        });
     }
 }

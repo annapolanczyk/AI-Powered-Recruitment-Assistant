@@ -2,84 +2,78 @@
   @description       : 
   @author            : ChangeMeIn@UserSettingsUnder.SFDoc
   @group             : 
-  @last modified on  : 02-25-2025
+  @last modified on  : 02-26-2025
   @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 -->
 <template>
     <lightning-card title="CV Analysis" icon-name="standard:document">
         <div class="slds-p-around_medium">
-            <template if:true={candidateId}>
-                <div class="slds-grid slds-gutters">
-                    <div class="slds-col slds-size_1-of-2">
-                        <lightning-input type="file" 
-                            label="Upload CV" 
-                            accept=".pdf,.doc,.docx"
-                            onchange={handleFileUpload}>
-                        </lightning-input>
-                        <div class="slds-m-top_medium slds-m-bottom_medium">
-                            <lightning-button 
-                                label="Analyze CV" 
-                                onclick={analyzeCV} 
-                                variant="brand"
-                                disabled={isAnalyzeDisabled}>
-                            </lightning-button>
-                        </div>
-                    </div>
-                    <div class="slds-col slds-size_1-of-2">
-                        <template if:true={isLoading}>
-                            <div class="slds-is-relative slds-p-around_medium">
-                                <lightning-spinner alternative-text="Analyzing CV..." size="medium"></lightning-spinner>
-                                <p class="slds-text-align_center">Analyzing CV using AI...</p>
-                            </div>
-                        </template>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input type="file" 
+                        label="Upload CV" 
+                        accept=".pdf,.doc,.docx,.txt"
+                        onchange={handleFileUpload}>
+                    </lightning-input>
+                    <div class="slds-m-top_medium slds-m-bottom_medium">
+                        <lightning-button 
+                            label="Analyze CV" 
+                            onclick={analyzeCV} 
+                            variant="brand"
+                            disabled={isAnalyzeDisabled}>
+                        </lightning-button>
                     </div>
                 </div>
-                
-                <template if:true={analysisResults}>
-                    <div class="slds-box slds-theme_shade slds-m-top_medium">
-                        <h2 class="slds-text-heading_medium slds-m-bottom_small">Analysis Results</h2>
-                        
-                        <div class="slds-grid slds-gutters">
-                            <div class="slds-col slds-size_1-of-2">
-                                <h3 class="slds-text-title_caps">Skills Identified</h3>
-                                <ul class="slds-list_dotted">
-                                    <template for:each={analysisResults.skills} for:item="skill">
-                                        <li key={skill}>{skill}</li>
-                                    </template>
-                                </ul>
-                            </div>
-                            <div class="slds-col slds-size_1-of-2">
-                                <h3 class="slds-text-title_caps">Job Match Score</h3>
-                                <div class="slds-m-top_x-small">
-                                    <lightning-progress-bar 
-                                        value={analysisResults.matchScore} 
-                                        size="large">
-                                    </lightning-progress-bar>
-                                    <p class="slds-text-align_center slds-m-top_x-small">
-                                        {analysisResults.matchScore}% Match
-                                    </p>
-                                </div>
-                            </div>
+                <div class="slds-col slds-size_1-of-2">
+                    <template if:true={isLoading}>
+                        <div class="slds-is-relative slds-p-around_medium">
+                            <lightning-spinner alternative-text="Analyzing CV..." size="medium"></lightning-spinner>
+                            <p class="slds-text-align_center">Analyzing CV using AI...</p>
                         </div>
-                        
-                        <div class="slds-m-top_medium">
-                            <h3 class="slds-text-title_caps">Recommendations</h3>
-                            <p>{analysisResults.recommendation}</p>
+                    </template>
+                </div>
+            </div>
+            
+            <template if:true={analysisResults}>
+                <div class="slds-box slds-theme_shade slds-m-top_medium">
+                    <h2 class="slds-text-heading_medium slds-m-bottom_small">Analysis Results</h2>
+                    
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col slds-size_1-of-2">
+                            <h3 class="slds-text-title_caps">Skills Identified</h3>
+                            <ul class="slds-list_dotted">
+                                <template for:each={analysisResults.skills} for:item="skill">
+                                    <li key={skill}>{skill}</li>
+                                </template>
+                            </ul>
                         </div>
-                        
-                        <div class="slds-m-top_medium">
-                            <lightning-button 
-                                label="Save Analysis Results" 
-                                onclick={saveResults} 
-                                variant="success">
-                            </lightning-button>
+                        <div class="slds-col slds-size_1-of-2">
+                            <h3 class="slds-text-title_caps">Job Match Score</h3>
+                            <div class="slds-m-top_x-small">
+                                <lightning-progress-bar 
+                                    value={analysisResults.matchScore} 
+                                    size="large">
+                                </lightning-progress-bar>
+                                <p class="slds-text-align_center slds-m-top_x-small">
+                                    {analysisResults.matchScore}% Match
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </template>
-            </template>
-            
-            <template if:false={candidateId}>
-                <p>Please select a candidate record to analyze CV.</p>
+                    
+                    <div class="slds-m-top_medium">
+                        <h3 class="slds-text-title_caps">Recommendations</h3>
+                        <p>{analysisResults.recommendation}</p>
+                    </div>
+                    
+                    <div class="slds-m-top_medium">
+                        <lightning-button 
+                            label="Save Analysis Results" 
+                            onclick={saveResults} 
+                            variant="success">
+                        </lightning-button>
+                    </div>
+                </div>
             </template>
         </div>
     </lightning-card>
